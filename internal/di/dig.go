@@ -1,0 +1,115 @@
+package di
+
+import (
+	"context"
+	"fmt"
+	"reflect"
+
+	"go.uber.org/dig"
+)
+
+// Dig is used as DI toolkit https://pkg.go.dev/go.uber.org/dig
+// we are not creating any abstraction over it, but we do have a set of tools to make it easier to use
+
+type ConstructorWithOpts struct {
+	Constructor any
+	Options     []dig.ProvideOption
+}
+
+func ProvideAll(container *dig.Container, providers ...any) error {
+	for i, provider := range providers {
+		switch p := provider.(type) {
+		case ConstructorWithOpts:
+			if err := container.Provide(p.Constructor, p.Options...); err != nil {
+				return fmt.Errorf("failed to provide %d-th dependency: %w", i, err)
+			}
+		default:
+			if err := container.Provide(provider); err != nil {
+				return fmt.Errorf("failed to provide %d-th dependency: %w", i, err)
+			}
+		}
+	}
+	return nil
+}
+
+// ProvideValue will create a constructor (e.g func) from a given value.
+func ProvideValue[T any](val T, opts ...dig.ProvideOption) ConstructorWithOpts {
+	return ConstructorWithOpts{
+		Constructor: func() T { return val },
+		Options:     opts,
+	}
+}
+
+// ProvideWithArg will create a constructor with a first arg explicitly provided
+// supposed return no error.
+func ProvideWithArg[
+	TArg any,
+	TConstructorArg any,
+	TRes any,
+](
+	arg TArg,
+	constructor func(arg TArg, cArg TConstructorArg) TRes,
+) func(TConstructorArg) TRes {
+	return func(cArg TConstructorArg) TRes {
+		return constructor(arg, cArg)
+	}
+}
+
+// ProvideWithArgErr will create a constructor with a first arg explicitly provided
+// supposed return an error.
+func ProvideWithArgErr[
+	TArg any,
+	TConstructorArg any,
+	TDep any,
+](
+	arg TArg,
+	constructor func(arg TArg, cArg TConstructorArg) (TDep, error),
+) func(TConstructorArg) (TDep, error) {
+	return func(cArg TConstructorArg) (TDep, error) {
+		return constructor(arg, cArg)
+	}
+}
+
+// ProvideImplementation is used to define implementation of some particular
+// interface so DI container could resolve the implementation of the interface properly.
+// Usually you may want to use this method if implementation was injected on a different layer.
+func ProvideImplementation[TImplementation any, TInterface any]( //nolint:ireturn
+	source TImplementation,
+) (TInterface, error) {
+	target, ok := any(source).(TInterface)
+	if !ok {
+		var src TImplementation
+		var tgt TInterface
+		return target, fmt.Errorf("failed to cast %s to %s", reflect.TypeOf(src), reflect.TypeOf(tgt))
+	}
+	return target, nil
+}
+
+// ProvideFactoryAs allows injecting implementation of a particular interface.
+// Functionally equivalent to injecting the factory first and then use ProvideAs.
+func ProvideFactoryAs[
+	TTarget any,
+	TSource any,
+	TTSourceDeps any,
+](srcFactory func(TTSourceDeps) TSource) func(deps TTSourceDeps) (TTarget, error) {
+	return func(deps TTSourceDeps) (TTarget, error) {
+		source := srcFactory(deps)
+		target, ok := any(source).(TTarget)
+		if !ok {
+			var src TSource
+			var tgt TTarget
+			return target, fmt.Errorf("failed to cast %s to %s", reflect.TypeOf(src), reflect.TypeOf(tgt))
+		}
+		return target, nil
+	}
+}
+
+// ProvideWithContext allows passing context to the constructor at the time of resolution.
+func ProvideWithContext[A any, R any](
+	ctx context.Context,
+	f func(ctx context.Context, arg A) (R, error),
+) func(arg A) (R, error) {
+	return func(arg A) (R, error) {
+		return f(ctx, arg)
+	}
+}

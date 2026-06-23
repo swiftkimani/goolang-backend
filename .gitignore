@@ -1,0 +1,14 @@
+.go/
+go/
+bin
+tmp
+.DS_Store
+.cover
+test.log
+.venv
+
+# User configs
+internal/config/*-user.yaml
+
+# Ignore MCP config file for now
+.cursor/mcp.json
