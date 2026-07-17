@@ -1,0 +1,18 @@
+tls:
+  certificates:
+    - certFile: /etc/traefik/dynamic/dev.benardkimani.co.ke.crt
+      keyFile: /etc/traefik/dynamic/dev.benardkimani.co.ke.key
+
+http:
+  routers:
+    goolang-frontend:
+      entryPoints:
+      - websecure
+      rule: Host(`dev.benardkimani.co.ke`)
+      service: goolang-frontend
+      tls: {}
+  services:
+    goolang-frontend:
+      loadBalancer:
+        servers:
+        - url: http://site-nginx-1:80
