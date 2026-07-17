@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GooLang Backend — Production-Ready Go Boilerplate</title>
+  <meta name="description" content="A production-ready Go backend boilerplate with CQRS, OpenTelemetry, MCP Server, and clean architecture. Built by Swift Kimani.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">GooLang</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#api">API</a>
+        <a href="#architecture">Architecture</a>
+        <a href="https://github.com/swiftkimani/goolang-backend" target="_blank" class="nav-github">GitHub ↗</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span class="theme-icon-sun">☀</span>
+          <span class="theme-icon-moon">☾</span>
+        </button>
+      </div>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-bg">
+      <div class="grid-lines"></div>
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+      <div class="glow glow-3"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Maintained by <a href="https://github.com/swiftkimani" target="_blank">Swift Kimani</a>
+      </div>
+      <h1 class="hero-title">
+        Build Go backends<br>
+        <span class="gradient-text">the right way.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Production-ready scaffolding with CQRS, clean architecture, OpenTelemetry,
+        MCP Server, and a full CRUD API. Clone it, extend it, ship it.
+      </p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="copyCommand('go install github.com/gemyago/golang-backend-boilerplate/cli/create-goolang-backend@latest')">
+          <span class="btn-icon">▶</span>
+          Quick Start
+        </button>
+        <a href="https://github.com/swiftkimani/goolang-backend" target="_blank" class="btn btn-secondary">
+          View Source
+        </a>
+      </div>
+      <div class="hero-terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-line" id="terminal-line-1">
+            <span class="prompt">$</span>
+            <span class="cmd">git clone https://github.com/swiftkimani/goolang-backend.git</span>
+          </div>
+          <div class="terminal-line" id="terminal-line-2">
+            <span class="prompt">$</span>
+            <span class="cmd">cd goolang-backend && go mod download</span>
+          </div>
+          <div class="terminal-line" id="terminal-line-3">
+            <span class="prompt">$</span>
+            <span class="cmd">go run ./cmd/server start --env local</span>
+          </div>
+          <div class="terminal-line" id="terminal-line-4">
+            <span class="output success">✓ Server running on http://localhost:8080</span>
+          </div>
+          <div class="terminal-line" id="terminal-line-5">
+            <span class="output">  GET /health → 200 OK</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">What's Inside</span>
+        <h2 class="section-title">Everything you need, nothing you don't</h2>
+        <p class="section-subtitle">Battle-tested patterns for real production workloads</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>CQRS Architecture</h3>
+          <p>Clean separation of Commands and Queries. Business logic stays isolated, testable, and maintainable.</p>
+          <div class="feature-tag">app/users_commands.go</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔌</div>
+          <h3>OpenAPI-First API</h3>
+          <p>Define your API in YAML, get type-safe handlers generated automatically. Zero boilerplate, full validation.</p>
+          <div class="feature-tag">internal/api/http/v1routes.yaml</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>OpenTelemetry</h3>
+          <p>Built-in distributed tracing, metrics, and structured logging. Plug in any OTLP-compatible backend.</p>
+          <div class="feature-tag">internal/telemetry/</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>MCP Server</h3>
+          <p>Model Context Protocol tools over stdio and HTTP. Ready for AI agent integrations out of the box.</p>
+          <div class="feature-tag">cmd/mcp/</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3>SQLite (No CGO)</h3>
+          <p>Pure-Go SQLite driver. Zero external dependencies. Perfect for single-node deployments.</p>
+          <div class="feature-tag">internal/infrastructure/</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏗️</div>
+          <h3>Layered Architecture</h3>
+          <p>API → Application → Infrastructure. Consumer-defined interfaces, dependency inversion, DI via uber/dig.</p>
+          <div class="feature-tag">internal/wireup.go</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🐳</div>
+          <h3>Multi-Platform Docker</h3>
+          <p>Distroless runtime images for linux/amd64 and arm64. Minimal attack surface, maximum security.</p>
+          <div class="feature-tag">build/docker/Dockerfile</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3>Helm + Kubernetes</h3>
+          <p>Production Helm charts with Gateway API support. Deploy to any K8s cluster in minutes.</p>
+          <div class="feature-tag">deploy/helm/</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧪</div>
+          <h3>Test Infrastructure</h3>
+          <p>Mock generation, faker data, time mocking, deterministic UUIDs. Every pattern you need for thorough testing.</p>
+          <div class="feature-tag">doc/testing-best-practices.md</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quickstart" id="quickstart">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Get Started</span>
+        <h2 class="section-title">Up and running in 30 seconds</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <h3>Clone the repo</h3>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCommand('git clone https://github.com/swiftkimani/goolang-backend.git my-project', this)">Copy</button>
+              <code>git clone https://github.com/swiftkimani/goolang-backend.git my-project</code>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <h3>Install dependencies</h3>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCommand('cd my-project && go mod download && go install tool', this)">Copy</button>
+              <code>cd my-project && go mod download && go install tool</code>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <h3>Run it</h3>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCommand('go run ./cmd/server start --env local', this)">Copy</button>
+              <code>go run ./cmd/server start --env local</code>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">04</div>
+          <div class="step-content">
+            <h3>Test the API</h3>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCommand('curl http://localhost:8080/health', this)">Copy</button>
+              <code>curl http://localhost:8080/health</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="api" id="api">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Live API</span>
+        <h2 class="section-title">Try the endpoints</h2>
+        <p class="section-subtitle">Interact with the running API directly from this page</p>
+      </div>
+      <div class="api-explorer">
+        <div class="api-sidebar">
+          <div class="api-group">
+            <span class="api-group-label">health</span>
+            <button class="api-endpoint active" data-method="GET" data-path="/health" onclick="selectEndpoint(this)">
+              <span class="method get">GET</span>/health
+            </button>
+          </div>
+          <div class="api-group">
+            <span class="api-group-label">echo</span>
+            <button class="api-endpoint" data-method="POST" data-path="/echo" onclick="selectEndpoint(this)">
+              <span class="method post">POST</span>/echo
+            </button>
+          </div>
+          <div class="api-group">
+            <span class="api-group-label">users</span>
+            <button class="api-endpoint" data-method="GET" data-path="/users" onclick="selectEndpoint(this)">
+              <span class="method get">GET</span>/users
+            </button>
+            <button class="api-endpoint" data-method="POST" data-path="/users" onclick="selectEndpoint(this)">
+              <span class="method post">POST</span>/users
+            </button>
+          </div>
+        </div>
+        <div class="api-panel">
+          <div class="api-panel-header">
+            <div class="api-method-badge" id="api-method-badge">GET</div>
+            <code id="api-path-display">/health</code>
+            <button class="btn btn-primary btn-sm" onclick="sendRequest()" id="send-btn">Send Request</button>
+          </div>
+          <div class="api-panel-body">
+            <div class="api-section" id="request-section" style="display:none;">
+              <label>Request Body</label>
+              <textarea id="request-body" rows="6" placeholder='{"message": "hello"}'></textarea>
+            </div>
+            <div class="api-section">
+              <label>Response</label>
+              <pre id="response-output" class="response-output">
+<span class="response-placeholder">Click "Send Request" to see the response</span>
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="architecture" id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Architecture</span>
+        <h2 class="section-title">Pragmatic layered architecture</h2>
+        <p class="section-subtitle">Every layer has a clear responsibility. Dependencies point inward only.</p>
+      </div>
+      <div class="arch-diagram">
+        <div class="arch-layer arch-api">
+          <div class="arch-layer-label">API Layer</div>
+          <div class="arch-layer-desc">HTTP, MCP — where the world meets your system</div>
+          <div class="arch-files">internal/api/http/ · internal/api/mcp/</div>
+        </div>
+        <div class="arch-arrow">↓ Consumer-Defined Interfaces</div>
+        <div class="arch-layer arch-app">
+          <div class="arch-layer-label">Application Layer</div>
+          <div class="arch-layer-desc">CQRS Commands & Queries — all business logic lives here</div>
+          <div class="arch-files">internal/app/</div>
+        </div>
+        <div class="arch-arrow">↓ Ports (Interfaces)</div>
+        <div class="arch-layer arch-infra">
+          <div class="arch-layer-label">Infrastructure Layer</div>
+          <div class="arch-layer-desc">SQLite, Petstore API, HTTP clients — outbound adapters</div>
+          <div class="arch-files">internal/infrastructure/</div>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer arch-config">
+          <div class="arch-layer-label">Cross-Cutting</div>
+          <div class="arch-layer-desc">Config, DI, Telemetry, Time, Identity</div>
+          <div class="arch-files">internal/config/ · internal/di/ · internal/telemetry/ · internal/system/</div>
+        </div>
+      </div>
+      <div class="tech-stack">
+        <span class="tech-badge">Go 1.26</span>
+        <span class="tech-badge">SQLite</span>
+        <span class="tech-badge">uber/dig</span>
+        <span class="tech-badge">Cobra</span>
+        <span class="tech-badge">Viper</span>
+        <span class="tech-badge">OpenTelemetry</span>
+        <span class="tech-badge">mcp-go</span>
+        <span class="tech-badge">Docker</span>
+        <span class="tech-badge">Helm</span>
+        <span class="tech-badge">GitHub Actions</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">GooLang Backend</span>
+        <span class="footer-divider">·</span>
+        <span class="footer-copy">Built by <a href="https://github.com/swiftkimani" target="_blank">Swift Kimani</a></span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/swiftkimani/goolang-backend" target="_blank">GitHub</a>
+        <a href="https://github.com/swiftkimani/goolang-backend/blob/main/README.md" target="_blank">Docs</a>
+        <a href="https://github.com/gemyago/golang-backend-boilerplate" target="_blank">Original ↗</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

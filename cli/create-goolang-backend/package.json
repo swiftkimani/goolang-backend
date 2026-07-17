@@ -1,0 +1,14 @@
+{
+  "name": "create-goolang-backend",
+  "version": "1.0.0",
+  "description": "Scaffold a new Go backend project from the goolang-backend template",
+  "main": "index.js",
+  "bin": {
+    "create-goolang-backend": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

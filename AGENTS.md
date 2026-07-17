@@ -62,6 +62,7 @@ Codebase is split on multiple parts:
 - Lint strictly: `make lint` (see `.golangci.yml`). Use `//nolint:<rule>` only with justification.
 - Many linting issues are auto fixable with `bin/golangci-lint run --fix`, try running it to apply fixes prior to direct updates
 - Wrap errors with `fmt.Errorf("<something>: %w", err)`
+- **Agent Skills:** AI must strictly adhere to the best practices defined in our `.agents/skills` directory (e.g., `golang-best-practices`, `api-security-patterns`, `database-engineering-patterns`).
 
 ### Testing Style and Patterns
 
