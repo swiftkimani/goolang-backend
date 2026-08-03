@@ -5,7 +5,27 @@ const fs = require('fs');
 const path = require('path');
 
 const repoUrl = 'https://github.com/swiftkimani/goolang-backend.git';
-const oldModuleName = 'github.com/swiftkimani/goolang-backend';
+const oldModuleName = 'github.com/gemyago/golang-backend-boilerplate';
+const oldProjectSlug = oldModuleName.split('/').pop();
+// Only the markdown link forms below (a bare https:// URL, or a [owner/repo]
+// bracketed reference) are attribution to the upstream project and must survive
+// renaming untouched. Bare "github.com/gemyago/..." mentions are Go import paths
+// and must still get renamed, so they're deliberately not protected here.
+const upstreamRepoUrl = `https://${oldModuleName}`;
+const upstreamRepoBracketRef = `[${oldModuleName.slice('github.com/'.length)}]`;
+
+const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const URL_PLACEHOLDER = '___GOOLANG_CLI_UPSTREAM_URL_PLACEHOLDER___';
+const REF_PLACEHOLDER = '___GOOLANG_CLI_UPSTREAM_REF_PLACEHOLDER___';
+
+const renameProjectRefs = (content) => content
+  .split(upstreamRepoUrl).join(URL_PLACEHOLDER)
+  .split(upstreamRepoBracketRef).join(REF_PLACEHOLDER)
+  .replace(new RegExp(escapeRegExp(oldModuleName), 'g'), projectName)
+  .replace(new RegExp(escapeRegExp(oldProjectSlug), 'g'), projectName)
+  .split(URL_PLACEHOLDER).join(upstreamRepoUrl)
+  .split(REF_PLACEHOLDER).join(upstreamRepoBracketRef);
 
 const projectName = process.argv[2];
 
@@ -55,14 +75,14 @@ try {
   };
 
   const filesToSearch = walkSync(targetDir);
-  const extsToReplace = ['.go', '.mod', '.md', '.yaml', '.yml', 'Makefile'];
+  const extsToReplace = ['.go', '.mod', '.md', '.yaml', '.yml', '.html', 'Makefile'];
 
   let count = 0;
   for (const file of filesToSearch) {
     if (extsToReplace.some(ext => file.endsWith(ext)) || file.endsWith('AGENTS.md')) {
       let content = fs.readFileSync(file, 'utf8');
-      if (content.includes(oldModuleName)) {
-        content = content.replace(new RegExp(oldModuleName, 'g'), projectName);
+      if (content.includes(oldModuleName) || content.includes(oldProjectSlug)) {
+        content = renameProjectRefs(content);
         fs.writeFileSync(file, content, 'utf8');
         count++;
       }

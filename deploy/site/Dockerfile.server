@@ -10,7 +10,9 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -tags=release -o /dist/server ./cmd/server
 
-FROM gcr.io/distroless/static-debian12
+# alpine (not distroless) ships wget (via busybox) and a CA bundle out of the box,
+# so the docker-compose healthcheck can wget its own /health endpoint with no extra install step
+FROM alpine:3.20
 
 COPY --from=builder /dist/server /server
 

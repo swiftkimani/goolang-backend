@@ -24,6 +24,7 @@
         <a href="#quickstart">Quick Start</a>
         <a href="#api">API</a>
         <a href="#architecture">Architecture</a>
+        <a href="/docs.html">Docs</a>
         <a href="https://github.com/swiftkimani/goolang-backend" target="_blank" class="nav-github">GitHub ↗</a>
         <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
           <span class="theme-icon-sun">☀</span>
@@ -57,12 +58,12 @@
         MCP Server, and a full CRUD API. Clone it, extend it, ship it.
       </p>
       <div class="hero-actions">
-        <button class="btn btn-primary" onclick="copyCommand('go install github.com/gemyago/golang-backend-boilerplate/cli/create-goolang-backend@latest')">
+        <button class="btn btn-primary" onclick="copyCommand('npx github:swiftkimani/goolang-backend my-app', this)">
           <span class="btn-icon">▶</span>
-          Quick Start
+          npx github:swiftkimani/goolang-backend my-app
         </button>
-        <a href="https://github.com/swiftkimani/goolang-backend" target="_blank" class="btn btn-secondary">
-          View Source
+        <a href="/docs.html" class="btn btn-secondary">
+          Read the Docs
         </a>
       </div>
       <div class="hero-terminal">
@@ -75,11 +76,11 @@
         <div class="terminal-body">
           <div class="terminal-line" id="terminal-line-1">
             <span class="prompt">$</span>
-            <span class="cmd">git clone https://github.com/swiftkimani/goolang-backend.git</span>
+            <span class="cmd">npx github:swiftkimani/goolang-backend my-app</span>
           </div>
           <div class="terminal-line" id="terminal-line-2">
             <span class="prompt">$</span>
-            <span class="cmd">cd goolang-backend && go mod download</span>
+            <span class="cmd">cd my-app && go mod tidy && make test</span>
           </div>
           <div class="terminal-line" id="terminal-line-3">
             <span class="prompt">$</span>
@@ -172,10 +173,10 @@
         <div class="step">
           <div class="step-number">01</div>
           <div class="step-content">
-            <h3>Clone the repo</h3>
+            <h3>Scaffold a new project</h3>
             <div class="code-block">
-              <button class="copy-btn" onclick="copyCommand('git clone https://github.com/swiftkimani/goolang-backend.git my-project', this)">Copy</button>
-              <code>git clone https://github.com/swiftkimani/goolang-backend.git my-project</code>
+              <button class="copy-btn" onclick="copyCommand('npx github:swiftkimani/goolang-backend my-project', this)">Copy</button>
+              <code>npx github:swiftkimani/goolang-backend my-project</code>
             </div>
           </div>
         </div>
@@ -184,8 +185,8 @@
           <div class="step-content">
             <h3>Install dependencies</h3>
             <div class="code-block">
-              <button class="copy-btn" onclick="copyCommand('cd my-project && go mod download && go install tool', this)">Copy</button>
-              <code>cd my-project && go mod download && go install tool</code>
+              <button class="copy-btn" onclick="copyCommand('cd my-project && go mod tidy', this)">Copy</button>
+              <code>cd my-project && go mod tidy</code>
             </div>
           </div>
         </div>
@@ -210,6 +211,9 @@
           </div>
         </div>
       </div>
+      <p style="text-align:center; margin-top:32px; color:var(--text-dim); font-size:0.9rem;">
+        Prefer <code style="font-family:var(--mono); background:var(--accent-subtle); color:var(--accent-light); padding:2px 6px; border-radius:4px;">git clone</code> instead of npx, or want the full CLI/config/deployment reference? <a href="/docs.html" style="color:var(--accent);">Read the docs →</a>
+      </p>
     </div>
   </section>
 
@@ -242,6 +246,27 @@
             <button class="api-endpoint" data-method="POST" data-path="/users" onclick="selectEndpoint(this)">
               <span class="method post">POST</span>/users
             </button>
+            <button class="api-endpoint" data-method="GET" data-path="/users/{userId}" onclick="selectEndpoint(this)">
+              <span class="method get">GET</span>/users/{id}
+            </button>
+            <button class="api-endpoint" data-method="PUT" data-path="/users/{userId}" onclick="selectEndpoint(this)">
+              <span class="method put">PUT</span>/users/{id}
+            </button>
+            <button class="api-endpoint" data-method="DELETE" data-path="/users/{userId}" onclick="selectEndpoint(this)">
+              <span class="method delete">DEL</span>/users/{id}
+            </button>
+          </div>
+          <div class="api-group">
+            <span class="api-group-label">pets</span>
+            <button class="api-endpoint" data-method="GET" data-path="/users/{userId}/pets" onclick="selectEndpoint(this)">
+              <span class="method get">GET</span>/users/{id}/pets
+            </button>
+            <button class="api-endpoint" data-method="POST" data-path="/users/{userId}/pets" onclick="selectEndpoint(this)">
+              <span class="method post">POST</span>/users/{id}/pets
+            </button>
+            <button class="api-endpoint" data-method="DELETE" data-path="/users/{userId}/pets/{petId}" onclick="selectEndpoint(this)">
+              <span class="method delete">DEL</span>/pets/{id}
+            </button>
           </div>
         </div>
         <div class="api-panel">
@@ -251,6 +276,7 @@
             <button class="btn btn-primary btn-sm" onclick="sendRequest()" id="send-btn">Send Request</button>
           </div>
           <div class="api-panel-body">
+            <div class="api-section" id="params-section" style="display:none;"></div>
             <div class="api-section" id="request-section" style="display:none;">
               <label>Request Body</label>
               <textarea id="request-body" rows="6" placeholder='{"message": "hello"}'></textarea>
@@ -324,7 +350,7 @@
       </div>
       <div class="footer-right">
         <a href="https://github.com/swiftkimani/goolang-backend" target="_blank">GitHub</a>
-        <a href="https://github.com/swiftkimani/goolang-backend/blob/main/README.md" target="_blank">Docs</a>
+        <a href="/docs.html">Docs</a>
         <a href="https://github.com/gemyago/golang-backend-boilerplate" target="_blank">Original ↗</a>
       </div>
     </div>

@@ -6,6 +6,8 @@
 
 Production-ready Go backend boilerplate with CQRS, clean architecture, OpenTelemetry, MCP Server, and a full CRUD API.
 
+**[Live demo & full documentation → dev.benardkimani.co.ke](https://dev.benardkimani.co.ke/docs.html)**
+
 ## Features
 
 * **CQRS Architecture** — Commands and Queries separated for clean business logic
@@ -31,6 +33,21 @@ Production-ready Go backend boilerplate with CQRS, clean architecture, OpenTelem
 | Watch | [gow](https://github.com/mitranim/gow) |
 
 ## Quick Start
+
+Scaffold a new project in one line, no cloning or forking required:
+
+```bash
+npx github:swiftkimani/goolang-backend my-app
+cd my-app && go mod tidy
+go run ./cmd/server start --env local
+```
+
+The CLI (`cli/create-goolang-backend/`) clones the template, strips its own folder and `.git`, renames the
+Go module to your project name everywhere it appears (leaving upstream attribution links untouched), and
+initializes a fresh git repo. See the [CLI reference](https://dev.benardkimani.co.ke/docs.html#cli-reference)
+for details.
+
+Prefer a plain clone instead:
 
 ```bash
 # Clone the repo
@@ -90,6 +107,10 @@ helm upgrade api-service deploy/helm/api-service --install \
   -f deploy/helm/api-service/values.yaml \
   --create-namespace
 ```
+
+Also see [`deploy/site/`](./deploy/site) for a self-hosted Docker Compose + Traefik setup — it's the exact
+recipe running [dev.benardkimani.co.ke](https://dev.benardkimani.co.ke/), documented in the
+[Deployment guide](https://dev.benardkimani.co.ke/docs.html#deployment).
 
 ## Credits
 

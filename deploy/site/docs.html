@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs — GooLang Backend</title>
+  <meta name="description" content="Documentation for GooLang Backend: quick start, CLI reference, architecture, configuration, API reference, MCP server, testing, and deployment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬡</text></svg>">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">GooLang</span>
+      </a>
+      <div class="nav-links">
+        <a href="/#features">Features</a>
+        <a href="/#quickstart">Quick Start</a>
+        <a href="/#api">API</a>
+        <a href="/docs.html">Docs</a>
+        <a href="https://github.com/swiftkimani/goolang-backend" target="_blank" class="nav-github">GitHub ↗</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span class="theme-icon-sun">☀</span>
+          <span class="theme-icon-moon">☾</span>
+        </button>
+      </div>
+      <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="docs-shell">
+    <aside class="docs-sidebar">
+      <div class="docs-nav-group">
+        <div class="docs-nav-title">Getting Started</div>
+        <a href="#introduction">Introduction</a>
+        <a href="#quick-start">Quick Start</a>
+        <a href="#cli-reference">CLI Reference</a>
+      </div>
+      <div class="docs-nav-group">
+        <div class="docs-nav-title">Core Concepts</div>
+        <a href="#project-structure">Project Structure</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#configuration">Configuration</a>
+      </div>
+      <div class="docs-nav-group">
+        <div class="docs-nav-title">Reference</div>
+        <a href="#api-reference">API Reference</a>
+        <a href="#mcp-server">MCP Server</a>
+      </div>
+      <div class="docs-nav-group">
+        <div class="docs-nav-title">Guides</div>
+        <a href="#testing">Testing</a>
+        <a href="#deployment">Deployment</a>
+      </div>
+      <div class="docs-nav-group">
+        <div class="docs-nav-title">Project</div>
+        <a href="#license">License &amp; Credits</a>
+      </div>
+    </aside>
+
+    <main class="docs-content">
+      <div class="docs-header">
+        <h1>Documentation</h1>
+        <p>Everything you need to scaffold, run, and ship a production Go backend with GooLang.</p>
+      </div>
+
+      <section class="docs-section" id="introduction">
+        <h2>Introduction</h2>
+        <p>
+          GooLang Backend is a production-ready Go service template: CQRS application layer, an OpenAPI-first
+          HTTP API with generated handlers, OpenTelemetry tracing/metrics/logs, an MCP (Model Context Protocol)
+          server for AI agent integrations, pure-Go SQLite persistence, and Docker/Helm deployment out of the box.
+        </p>
+        <p>
+          It's a fork of <a href="https://github.com/gemyago/golang-backend-boilerplate" target="_blank">gemyago/golang-backend-boilerplate</a>,
+          maintained by <a href="https://github.com/swiftkimani" target="_blank">Swift Kimani</a>. The goal of this
+          fork: keep the original's architecture intact while adding a one-line scaffolding CLI and this
+          documentation site — the same experience you'd expect from <code>create-next-app</code>, for Go.
+        </p>
+        <div class="docs-callout">
+          <span>💡</span>
+          <span><strong>This site is self-hosted proof.</strong> dev.benardkimani.co.ke runs on the exact
+          Docker Compose + Traefik pattern described in <a href="#deployment" style="color:var(--accent);">Deployment</a> below —
+          an nginx container serving this static site, proxying <code>/api/*</code> to the Go server sitting right next to it.</span>
+        </div>
+      </section>
+
+      <section class="docs-section" id="quick-start">
+        <h2>Quick Start</h2>
+        <p>Scaffold a new project without cloning or forking anything:</p>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('npx github:swiftkimani/goolang-backend my-app', this)">Copy</button>
+          <code>npx github:swiftkimani/goolang-backend my-app</code>
+        </div>
+        <p>Then boot it:</p>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('cd my-app &amp;&amp; go mod tidy &amp;&amp; make test', this)">Copy</button>
+          <code>cd my-app && go mod tidy && make test</code>
+        </div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('go run ./cmd/server start --env local --noop', this)">Copy</button>
+          <code>go run ./cmd/server start --env local --noop</code>
+        </div>
+        <p>
+          <code>--noop</code> dry-runs startup checks without requiring external dependencies — useful for
+          verifying the setup before wiring a real database or OTEL collector. Drop it to actually serve traffic:
+        </p>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('go run ./cmd/server start --env local', this)">Copy</button>
+          <code>go run ./cmd/server start --env local</code>
+        </div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('curl http://localhost:8080/health', this)">Copy</button>
+          <code>curl http://localhost:8080/health</code>
+        </div>
+        <p>Prefer a plain git clone? That works too, you'll just rename the Go module yourself:</p>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('git clone https://github.com/swiftkimani/goolang-backend.git my-app', this)">Copy</button>
+          <code>git clone https://github.com/swiftkimani/goolang-backend.git my-app</code>
+        </div>
+      </section>
+
+      <section class="docs-section" id="cli-reference">
+        <h2>CLI Reference</h2>
+        <p><code>create-goolang-backend</code> lives at <code>cli/create-goolang-backend/</code> in the repo and runs entirely on your machine — no telemetry, no registry account needed.</p>
+        <div class="code-block">
+          <code>npx github:swiftkimani/goolang-backend &lt;project-directory&gt;</code>
+        </div>
+        <p>What it does, in order:</p>
+        <ol>
+          <li>Shallow-clones the template repo into <code>&lt;project-directory&gt;</code></li>
+          <li>Removes <code>.git</code> and the <code>cli/</code> folder (it's a template-only concern)</li>
+          <li>Rewrites the Go module path (<code>github.com/gemyago/golang-backend-boilerplate</code>) to your project name across <code>.go</code>, <code>.mod</code>, <code>.md</code>, <code>.yaml</code>/<code>.yml</code>, <code>.html</code>, and <code>Makefile</code>/<code>AGENTS.md</code> files</li>
+          <li>Leaves upstream attribution links (like the one in this page's <a href="#license" style="color:var(--accent);">License &amp; Credits</a> section) untouched — only import paths and slugs get renamed</li>
+          <li>Initializes a fresh git repository with an initial commit</li>
+        </ol>
+        <p>Requirements: <code>git</code> and <code>node</code> for the scaffolding step; Go 1.26+ (see <code>go.mod</code>) for everything after.</p>
+      </section>
+
+      <section class="docs-section" id="project-structure">
+        <h2>Project Structure</h2>
+        <div class="docs-table-wrap">
+          <table class="docs-table">
+            <tr><th>Path</th><th class="desc">What's there</th></tr>
+            <tr><td>internal/</td><td class="desc">Primary application code — API, app (CQRS), config, DI, infrastructure, telemetry, system</td></tr>
+            <tr><td>cmd/</td><td class="desc">Binary entrypoints: <code>server</code>, <code>jobs</code>, <code>mcp</code></td></tr>
+            <tr><td>build/</td><td class="desc">Docker build tooling — multi-platform image builds</td></tr>
+            <tr><td>deploy/</td><td class="desc">Helm chart for Kubernetes + this landing/docs site's own Docker Compose deployment</td></tr>
+            <tr><td>doc/</td><td class="desc">Human docs, e.g. testing best practices</td></tr>
+            <tr><td>.github/</td><td class="desc">CI/CD workflows</td></tr>
+          </table>
+        </div>
+        <p>Nearest <code>AGENTS.md</code> wins for AI coding agents — root, <code>internal/</code>, <code>build/</code>, and <code>deploy/</code> each carry one scoped to that subtree.</p>
+      </section>
+
+      <section class="docs-section" id="architecture">
+        <h2>Architecture</h2>
+        <p>Pragmatic layered architecture. Dependencies point inward only, wired at startup via <code>uber/dig</code>.</p>
+        <div class="arch-diagram" style="max-width:none;">
+          <div class="arch-layer arch-api">
+            <div class="arch-layer-label">API Layer</div>
+            <div class="arch-layer-desc">HTTP, MCP — where the world meets your system</div>
+            <div class="arch-files">internal/api/http/ · internal/api/mcp/</div>
+          </div>
+          <div class="arch-arrow">↓ Consumer-Defined Interfaces</div>
+          <div class="arch-layer arch-app">
+            <div class="arch-layer-label">Application Layer</div>
+            <div class="arch-layer-desc">CQRS Commands &amp; Queries — all business logic lives here</div>
+            <div class="arch-files">internal/app/</div>
+          </div>
+          <div class="arch-arrow">↓ Ports (Interfaces)</div>
+          <div class="arch-layer arch-infra">
+            <div class="arch-layer-label">Infrastructure Layer</div>
+            <div class="arch-layer-desc">SQLite, Petstore API, HTTP clients — outbound adapters</div>
+            <div class="arch-files">internal/infrastructure/</div>
+          </div>
+          <div class="arch-arrow">↓</div>
+          <div class="arch-layer arch-config">
+            <div class="arch-layer-label">Cross-Cutting</div>
+            <div class="arch-layer-desc">Config, DI, Telemetry, Time, Identity</div>
+            <div class="arch-files">internal/config/ · internal/di/ · internal/telemetry/ · internal/system/</div>
+          </div>
+        </div>
+        <h3>OpenAPI-first handlers</h3>
+        <p>
+          Routes are defined once in <code>internal/api/http/v1routes.yaml</code>. Type-safe handlers are
+          generated from that spec via <a href="https://github.com/gemyago/apigen" target="_blank">apigen</a> —
+          edit the YAML, run <code>go generate</code>, get compile-time-checked request/response types.
+        </p>
+      </section>
+
+      <section class="docs-section" id="configuration">
+        <h2>Configuration</h2>
+        <p>Config is layered: <code>internal/config/default.yaml</code> → <code>&lt;env&gt;.yaml</code> → optional <code>&lt;env&gt;-user.yaml</code> (gitignored, for local overrides).</p>
+        <div class="docs-table-wrap">
+          <table class="docs-table">
+            <tr><th>Key</th><th class="desc">Purpose</th><th>Default</th></tr>
+            <tr><td>defaultLogLevel</td><td class="desc">Base log level</td><td>INFO</td></tr>
+            <tr><td>httpServer.port</td><td class="desc">HTTP listen port</td><td>8080</td></tr>
+            <tr><td>gracefulShutdownTimeout</td><td class="desc">Drain time on SIGTERM</td><td>10s</td></tr>
+            <tr><td>database.dsn</td><td class="desc">SQLite DSN (pure-Go driver, no CGO)</td><td>./data/app.db</td></tr>
+            <tr><td>petstore.baseURL</td><td class="desc">Sample external HTTP client target</td><td>petstore3.swagger.io</td></tr>
+            <tr><td>mcpServer.name / version</td><td class="desc">Identity reported to MCP clients</td><td>golang-backend-boilerplate-mcp</td></tr>
+            <tr><td>openTelemetry.enabled</td><td class="desc">Master switch for tracing/metrics/logs export</td><td>false</td></tr>
+          </table>
+        </div>
+        <p>Every value is also settable via env var, prefixed <code>APP_</code> with dots/dashes converted to underscores:</p>
+        <div class="code-block">
+          <code>APP_ENV=local  APP_HTTP_SERVER_PORT=8080  APP_DATABASE_DSN=/app/data/app.db  APP_JSON_LOGS=true</code>
+        </div>
+        <p>Common CLI flags on every binary: <code>--env</code>, <code>--log-level</code>, <code>--json-logs</code>, <code>--logs-file</code>.</p>
+      </section>
+
+      <section class="docs-section" id="api-reference">
+        <h2>API Reference</h2>
+        <p>Base path <code>/</code> on the Go server, proxied under <code>/api/</code> on this site (see the
+        <a href="/#api" style="color:var(--accent);">live API explorer</a> on the home page — every endpoint below is wired up and callable from there).</p>
+
+        <h3>Health &amp; Echo</h3>
+        <div class="docs-table-wrap">
+          <table class="docs-table">
+            <tr><th>Method</th><th>Path</th><th class="desc">Description</th></tr>
+            <tr><td>GET</td><td>/health</td><td class="desc">Liveness check — <code>{"status":"OK"}</code></td></tr>
+            <tr><td>POST</td><td>/echo</td><td class="desc">Echoes back <code>{"message": string}</code> — useful smoke test for the request pipeline</td></tr>
+          </table>
+        </div>
+
+        <h3>Users</h3>
+        <div class="docs-table-wrap">
+          <table class="docs-table">
+            <tr><th>Method</th><th>Path</th><th class="desc">Description</th></tr>
+            <tr><td>GET</td><td>/users</td><td class="desc">List all users</td></tr>
+            <tr><td>POST</td><td>/users</td><td class="desc">Create a user — <code>{name, email}</code> → <code>{userId}</code></td></tr>
+            <tr><td>GET</td><td>/users/{userId}</td><td class="desc">Get a user by id</td></tr>
+            <tr><td>PUT</td><td>/users/{userId}</td><td class="desc">Update name/email</td></tr>
+            <tr><td>DELETE</td><td>/users/{userId}</td><td class="desc">Delete a user</td></tr>
+          </table>
+        </div>
+
+        <h3>Pets (nested under a user)</h3>
+        <div class="docs-table-wrap">
+          <table class="docs-table">
+            <tr><th>Method</th><th>Path</th><th class="desc">Description</th></tr>
+            <tr><td>GET</td><td>/users/{userId}/pets</td><td class="desc">List a user's pets</td></tr>
+            <tr><td>POST</td><td>/users/{userId}/pets</td><td class="desc">Add a pet — <code>{name, status, photoUrls?}</code>, status is one of <code>available|pending|sold</code></td></tr>
+            <tr><td>DELETE</td><td>/users/{userId}/pets/{petId}</td><td class="desc">Remove a pet from a user</td></tr>
+          </table>
+        </div>
+        <p>Full request/response schemas live in <code>internal/api/http/v1routes.yaml</code> (OpenAPI 3.0.3) — the source of truth apigen generates handlers from.</p>
+      </section>
+
+      <section class="docs-section" id="mcp-server">
+        <h2>MCP Server</h2>
+        <p>
+          <code>cmd/mcp</code> exposes tools over the Model Context Protocol so AI agents can call into this
+          service directly, over stdio or HTTP.
+        </p>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('go run ./cmd/mcp stdio --env local --noop', this)">Copy</button>
+          <code>go run ./cmd/mcp stdio --env local --noop</code>
+        </div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('go run ./cmd/mcp http --env local --noop', this)">Copy</button>
+          <code>go run ./cmd/mcp http --env local --noop</code>
+        </div>
+        <p>Tools registered out of the box:</p>
+        <div class="docs-table-wrap">
+          <table class="docs-table">
+            <tr><th>Tool</th><th class="desc">Description</th></tr>
+            <tr><td>get_current_time</td><td class="desc">Current date/time in a requested format</td></tr>
+            <tr><td>calculate</td><td class="desc">Add, subtract, multiply, divide</td></tr>
+          </table>
+        </div>
+        <p>Add your own under <code>internal/api/mcp/controllers/</code> and register them alongside the existing ones.</p>
+      </section>
+
+      <section class="docs-section" id="testing">
+        <h2>Testing</h2>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('make test', this)">Copy</button>
+          <code>make test</code>
+        </div>
+        <ul>
+          <li>One top-level test function per component, nested <code>t.Run</code> per method/scenario</li>
+          <li><code>makeMockDeps</code> for dependency setup — no repeated inline wiring</li>
+          <li>Faker (<code>github.com/jaswdr/faker/v2</code>) for random test data, via factory functions</li>
+          <li><code>apptime.NewMockProvider()</code> for deterministic time, <code>ident.NewMockGenerator()</code> for deterministic UUIDs</li>
+          <li>Compare whole structs (<code>assert.Equal(t, expected, actual)</code>) over field-by-field checks</li>
+          <li>Mocks generated per <a href="#" onclick="return false;">mockery</a> config in <code>.mockery.yaml</code></li>
+        </ul>
+        <p>Full detail in <code>doc/testing-best-practices.md</code>.</p>
+      </section>
+
+      <section class="docs-section" id="deployment">
+        <h2>Deployment</h2>
+        <h3>Docker images</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('make -C build docker/.local-images', this)">Copy</button>
+          <code>make -C build docker/.local-images</code>
+        </div>
+        <p>Multi-platform (linux/amd64 + arm64), distroless runtime. Configure platforms/registries in <code>build/build.cfg</code>.</p>
+
+        <h3>Kubernetes via Helm</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('helm template deploy/helm/api-service --debug --name-template api-service -f deploy/helm/api-service/values.yaml', this)">Copy</button>
+          <code>helm template deploy/helm/api-service --debug --name-template api-service -f deploy/helm/api-service/values.yaml</code>
+        </div>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCommand('helm upgrade api-service deploy/helm/api-service --install --namespace community-manager -f deploy/helm/api-service/values.yaml --create-namespace --dry-run', this)">Copy</button>
+          <code>helm upgrade api-service deploy/helm/api-service --install --namespace community-manager -f deploy/helm/api-service/values.yaml --create-namespace --dry-run</code>
+        </div>
+
+        <h3>Self-hosting a static + API site (this site)</h3>
+        <p>
+          <code>deploy/site/</code> has the exact recipe used to run this page: an nginx container serving
+          static assets and proxying <code>/api/*</code> to a distroless Go server container, both behind
+          Traefik for TLS termination and routing.
+        </p>
+        <div class="docs-table-wrap">
+          <table class="docs-table">
+            <tr><th>File</th><th class="desc">Role</th></tr>
+            <tr><td>docker-compose.yml</td><td class="desc">nginx + go-server services, internal network between them</td></tr>
+            <tr><td>Dockerfile.nginx / Dockerfile.server</td><td class="desc">Build steps for each container</td></tr>
+            <tr><td>nginx.conf</td><td class="desc">Static asset serving, gzip, SPA fallback, <code>/api/</code> reverse proxy</td></tr>
+            <tr><td>deploy.sh</td><td class="desc">rsync + remote <code>docker compose up -d --build</code> over SSH</td></tr>
+          </table>
+        </div>
+        <div class="code-block">
+          <code>./deploy/site/deploy.sh</code>
+        </div>
+      </section>
+
+      <section class="docs-section" id="license">
+        <h2>License &amp; Credits</h2>
+        <p>MIT licensed. This project is a fork of <a href="https://github.com/gemyago/golang-backend-boilerplate" target="_blank">gemyago/golang-backend-boilerplate</a> — a well-crafted Go backend starter template. All original architecture and patterns are preserved; the fork adds the scaffolding CLI and this documentation site.</p>
+        <p>Fork maintained by <a href="https://github.com/swiftkimani" target="_blank">Swift Kimani</a>.</p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">GooLang Backend</span>
+        <span class="footer-divider">·</span>
+        <span class="footer-copy">Built by <a href="https://github.com/swiftkimani" target="_blank">Swift Kimani</a></span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/swiftkimani/goolang-backend" target="_blank">GitHub</a>
+        <a href="/docs.html">Docs</a>
+        <a href="https://github.com/gemyago/golang-backend-boilerplate" target="_blank">Original ↗</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

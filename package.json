@@ -1,0 +1,14 @@
+{
+  "name": "goolang-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scaffold a new Go backend from the goolang-backend boilerplate (CQRS, OpenTelemetry, MCP server, clean architecture) — run with npx.",
+  "bin": {
+    "create-goolang-backend": "cli/create-goolang-backend/index.js"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swiftkimani/goolang-backend.git"
+  }
+}

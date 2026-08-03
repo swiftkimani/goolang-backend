@@ -7,15 +7,13 @@ services:
     networks:
       - internal
       - proxy_network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy_network"
-      - "traefik.http.routers.goolang-frontend.rule=Host(`dev.benardkimani.co.ke`)"
-      - "traefik.http.routers.goolang-frontend.entrypoints=websecure"
-      - "traefik.http.routers.goolang-frontend.tls.certresolver=myresolver"
-      - "traefik.http.services.goolang-frontend.loadbalancer.server.port=80"
+    # Routing/TLS for dev.benardkimani.co.ke is owned by the Traefik file-provider
+    # config at deploy/site/goolang.yml (deployed to the host's Traefik dynamic dir) —
+    # no docker-label router here to avoid two routers competing for the same Host rule.
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost/nginx-health"]
+      # 127.0.0.1, not localhost: nginx only listens on IPv4 and some images resolve
+      # "localhost" to ::1 first, which wget doesn't fall back from — see go-server below.
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/nginx-health"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -35,7 +33,7 @@ services:
     volumes:
       - goolang-data:/app/data
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
       interval: 30s
       timeout: 5s
       retries: 3

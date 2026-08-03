@@ -47,6 +47,20 @@
     'POST /users': {
       method: 'POST', path: '/users', body: true,
       placeholder: '{\n  "name": "John Doe",\n  "email": "john@example.com"\n}'
+    },
+    'GET /users/{userId}': { method: 'GET', path: '/users/{userId}', body: false, params: ['userId'] },
+    'PUT /users/{userId}': {
+      method: 'PUT', path: '/users/{userId}', body: true, params: ['userId'],
+      placeholder: '{\n  "name": "Jane Doe",\n  "email": "jane@example.com"\n}'
+    },
+    'DELETE /users/{userId}': { method: 'DELETE', path: '/users/{userId}', body: false, params: ['userId'] },
+    'GET /users/{userId}/pets': { method: 'GET', path: '/users/{userId}/pets', body: false, params: ['userId'] },
+    'POST /users/{userId}/pets': {
+      method: 'POST', path: '/users/{userId}/pets', body: true, params: ['userId'],
+      placeholder: '{\n  "name": "Rex",\n  "status": "available"\n}'
+    },
+    'DELETE /users/{userId}/pets/{petId}': {
+      method: 'DELETE', path: '/users/{userId}/pets/{petId}', body: false, params: ['userId', 'petId']
     }
   };
 
@@ -66,6 +80,19 @@
     badge.className = 'api-method-badge method ' + method.toLowerCase();
     document.getElementById('api-path-display').textContent = path;
 
+    const paramsSection = document.getElementById('params-section');
+    if (paramsSection) {
+      if (ep.params && ep.params.length) {
+        paramsSection.style.display = 'block';
+        paramsSection.innerHTML = '<label>Path Params</label>' + ep.params.map(p =>
+          '<input type="text" class="param-input" data-param="' + p + '" placeholder="' + p + '" style="width:100%;margin-bottom:8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text);font-family:var(--mono);font-size:0.85rem;">'
+        ).join('');
+      } else {
+        paramsSection.style.display = 'none';
+        paramsSection.innerHTML = '';
+      }
+    }
+
     const reqSection = document.getElementById('request-section');
     const reqBody = document.getElementById('request-body');
 
@@ -84,6 +111,18 @@
     const ep = endpoints[currentEndpoint];
     const btn = document.getElementById('send-btn');
     const output = document.getElementById('response-output');
+
+    let resolvedPath = ep.path;
+    if (ep.params && ep.params.length) {
+      for (const input of document.querySelectorAll('.param-input')) {
+        const value = input.value.trim();
+        if (!value) {
+          output.innerHTML = '<span style="color: var(--red)">Missing path param: ' + escapeHtml(input.dataset.param) + '</span>';
+          return;
+        }
+        resolvedPath = resolvedPath.replace('{' + input.dataset.param + '}', encodeURIComponent(value));
+      }
+    }
 
     btn.disabled = true;
     btn.textContent = 'Sending...';
@@ -111,7 +150,7 @@
 
     const start = performance.now();
     try {
-      const res = await fetch(API_BASE + ep.path, opts);
+      const res = await fetch(API_BASE + resolvedPath, opts);
       const elapsed = Math.round(performance.now() - start);
       const contentType = res.headers.get('content-type') || '';
 
@@ -190,4 +229,22 @@
     el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
     observer.observe(el);
   });
+
+  // ═══════════════════════════════════════════════════════
+  // Docs sidebar scrollspy
+  // ═══════════════════════════════════════════════════════
+
+  const docsSections = document.querySelectorAll('.docs-section[id]');
+  const docsNavLinks = document.querySelectorAll('.docs-nav-group a');
+  if (docsSections.length && docsNavLinks.length) {
+    const setActive = (id) => {
+      docsNavLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    };
+    const spy = new IntersectionObserver((entries) => {
+      const visible = entries.filter(e => e.isIntersecting);
+      if (visible.length) setActive(visible[0].target.id);
+    }, { rootMargin: '-96px 0px -70% 0px', threshold: 0 });
+    docsSections.forEach(sec => spy.observe(sec));
+    if (location.hash) setActive(location.hash.slice(1));
+  }
 })();
