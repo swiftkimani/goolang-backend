@@ -1,0 +1,68 @@
+# The dev.benardkimani.co.ke site when Coolify builds and runs it.
+#
+# Same two containers as deploy/site/docker-compose.yml, with these differences:
+# - It sits at the repository root, because Coolify resolves build contexts against the root.
+# - The data volume is the one the existing deployment already has, declared external.
+# - Every built service names its image: Coolify builds under one project name and starts
+#   under another, and without a fixed name the start step cannot find what was built.
+# - Containers have fixed names and a memory cap each.
+#
+# Routing and the certificate stay in the host Traefik's file config (deploy/site/goolang.yml),
+# which points at "site-nginx-1"; the alias below keeps that name answering.
+# This stack and the one deploy/site/deploy.sh starts must not run at the same time.
+name: goolang
+
+services:
+  nginx:
+    build:
+      context: ./deploy/site
+      dockerfile: Dockerfile.nginx
+    image: goolang-nginx:latest
+    container_name: goolang-nginx
+    restart: unless-stopped
+    mem_limit: 1g
+    networks:
+      internal:
+      proxy_network:
+        aliases:
+          - site-nginx-1
+    healthcheck:
+      # 127.0.0.1, not localhost: nginx only listens on IPv4.
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/nginx-health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  go-server:
+    build:
+      context: .
+      dockerfile: deploy/site/Dockerfile.server
+    image: goolang-server:latest
+    container_name: goolang-server
+    restart: unless-stopped
+    mem_limit: 1g
+    networks:
+      - internal
+    environment:
+      - APP_ENV=production
+      - APP_DEFAULT_LOG_LEVEL=info
+      - APP_JSON_LOGS=true
+      - APP_DATABASE_DSN=/app/data/app.db
+    volumes:
+      - goolang-data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  goolang-data:
+    external: true
+    name: site_goolang-data
+
+networks:
+  internal:
+    driver: bridge
+  proxy_network:
+    external: true
