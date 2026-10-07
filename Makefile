@@ -34,7 +34,8 @@ go_path=$(shell go env GOPATH)
 go-test-coverage=$(go_path)/bin/go-test-coverage
 
 $(go-test-coverage):
-	go install github.com/vladopajic/go-test-coverage/v2@latest
+	# Pinned: v2.20.0 and later need Go 1.27, and go.mod is on 1.26.
+	go install github.com/vladopajic/go-test-coverage/v2@v2.19.0
 
 .PHONY: $(cover_profile)
 $(cover_profile): $(cover_dir)
