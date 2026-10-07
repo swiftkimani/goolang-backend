@@ -429,7 +429,7 @@ def main():
             cleanup_versions_command(args)
     
     except Exception as e:
-        logging.info(f"Command failed: {e}", file=sys.stderr)
+        logging.error(f"Command failed: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
