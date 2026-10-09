@@ -20,7 +20,13 @@ func TestRecover(t *testing.T) {
 
 	t.Run("should call next", func(t *testing.T) {
 		nextCalled := true
-		wantNextStatus := 200 + rand.Intn(399)
+		// Only statuses that may carry a body: 204 and 304 refuse one, and a random pick
+		// across the whole range landed on them now and then and failed the write below.
+		bodyStatuses := []int{
+			http.StatusOK, http.StatusCreated, http.StatusAccepted,
+			http.StatusBadRequest, http.StatusNotFound, http.StatusInternalServerError,
+		}
+		wantNextStatus := bodyStatuses[rand.Intn(len(bodyStatuses))]
 		wantRes := map[string]any{
 			"key1": fake.UUID().V4(),
 			"key2": fake.UUID().V4(),
