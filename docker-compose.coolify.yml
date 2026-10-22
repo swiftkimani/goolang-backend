@@ -22,10 +22,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy_network"
-      - "traefik.http.routers.goolang-frontend.rule=Host(`dev.benardkimani.co.ke`)"
-      - "traefik.http.routers.goolang-frontend.entrypoints=https"
-      - "traefik.http.routers.goolang-frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.goolang-frontend.loadbalancer.server.port=80"
+      - "traefik.http.routers.https-0-h95g6mx8dvn0vaarlzwzbkzm-nginx-ee43.rule=Host(`dev.benardkimani.co.ke`)"
+      - "traefik.http.routers.https-0-h95g6mx8dvn0vaarlzwzbkzm-nginx-ee43.entrypoints=https"
+      - "traefik.http.routers.https-0-h95g6mx8dvn0vaarlzwzbkzm-nginx-ee43.tls.certresolver=letsencrypt"
+      - "traefik.http.services.https-0-h95g6mx8dvn0vaarlzwzbkzm-nginx-ee43.loadbalancer.server.port=80"
     restart: unless-stopped
     mem_limit: 1g
     networks:
